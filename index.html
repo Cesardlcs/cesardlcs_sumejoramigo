@@ -389,7 +389,7 @@
       <span>Deja tu comentario</span>
     </div>
 
-    <h2 style="margin-top:16px;">Comentarios de fans</h2>
+    <h2 style="margin-top:16px;">Comentarios de mis fans</h2>
 
     <div id="comments-container" style="margin-top: 12px;"></div>
 
@@ -424,5 +424,75 @@
     </div>
   </div>
 </section>
+
+<script>
+  const commentsKey = "josejose-comments";
+
+  function loadComments() {
+    const container = document.getElementById("comments-container");
+    const saved = JSON.parse(localStorage.getItem(commentsKey) || "[]");
+
+    container.innerHTML = "";
+
+    if (saved.length === 0) {
+      container.innerHTML = `
+        <p style="color: var(--muted); font-size: 0.9rem;">
+          Aún no hay comentarios. ¡Sé el primero en escribir algo bonito! ❤️
+        </p>
+      `;
+      return;
+    }
+
+    saved.forEach((c, index) => {
+      const div = document.createElement("div");
+      div.style = `
+        margin-bottom: 12px;
+        padding: 10px 12px;
+        border-radius: 10px;
+        background: rgba(0,0,0,0.4);
+        border: 1px solid rgba(255,255,255,0.15);
+      `;
+      div.innerHTML = `
+        <p style="margin: 0; color: var(--text); font-size: 0.9rem;">${c}</p>
+        <button onclick="deleteComment(${index})"
+          style="
+            margin-top: 6px;
+            background: transparent;
+            border: none;
+            color: var(--accent-soft);
+            font-size: 0.75rem;
+            cursor: pointer;
+          ">
+          Borrar
+        </button>
+      `;
+      container.appendChild(div);
+    });
+  }
+
+  function addComment() {
+    const input = document.getElementById("comment-input");
+    let text = input.value.trim();
+    if (!text) return;
+
+    const saved = JSON.parse(localStorage.getItem(commentsKey) || "[]");
+    saved.push(text);
+
+    localStorage.setItem(commentsKey, JSON.stringify(saved));
+    input.value = "";
+
+    loadComments();
+  }
+
+  function deleteComment(index) {
+    const saved = JSON.parse(localStorage.getItem(commentsKey) || "[]");
+    saved.splice(index, 1);
+    localStorage.setItem(commentsKey, JSON.stringify(saved));
+    loadComments();
+  }
+
+  loadComments();
+</script>
+        
   </body>
 
